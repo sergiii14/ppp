@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+  apa1:
+    build: .
+    container_name: apa1
+    ports:
+      - "8001:80"
+    volumes:
+      - ./app_server1:/var/www/html
+    networks:
+      - interna1
+    depends_on:
+      - bbdd
+
+  apa2:
+    build: .
+    container_name: apa2
+    ports:
+      - "8002:80"
+    volumes:
+      - ./app_server2:/var/www/html
+    networks:
+      - interna1
+    depends_on:
+      - bbdd
+
+  apa3:
+    build: .
+    container_name: apa3
+    ports:
+      - "8003:80"
+    volumes:
+      - ./app_server3:/var/www/html
+    networks:
+      - interna1
+    depends_on:
+      - bbdd
+
+  bbdd:
+    image: mysql:latest
+    container_name: bbdd
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - Misdatos:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: alumne1234!
+      MYSQL_DATABASE: lamp_db
+      MYSQL_USER: lamp_user
+      MYSQL_PASSWORD: lamp_pass
+
+    networks:
+      - interna1
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    ports:
+      - "91:80"
+    environment:
+      MYSQL_ROOT_PASSWORD: alumne1234!
+      PMA_HOST: bbdd
+      PMA_PORT: 3306
+      PMA_USER: lamp_user
+      PMA_PASSWORD: lamp_pass
+    networks:
+      - interna1
+
+volumes:
+  Misdatos:
+
+networks:
+  interna1:
